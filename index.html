@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link & QR Hub - 스마트 웹 도구 모음</title>
+  <meta name="description" content="QR 코드 생성기 및 OpenAPI 기반 URL 단축 서비스를 제공하는 스마트 웹 유틸리티 허브.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-main: #0a0c10;
+      --bg-card: rgba(18, 22, 29, 0.85);
+      --bg-card-hover: rgba(26, 32, 44, 0.95);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(255, 255, 255, 0.18);
+      
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --accent: #8b5cf6;
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+
+      --shadow-card: 0 20px 50px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
+      --shadow-glow: 0 0 40px -10px var(--primary-glow);
+      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Background Light Orbs */
+    .ambient-glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+      animation: pulseGlow 12s ease-in-out infinite alternate;
+    }
+
+    .glow-top {
+      top: -150px;
+      left: 15%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    }
+
+    .glow-bottom {
+      bottom: -150px;
+      right: 15%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(1) translateY(0); opacity: 0.35; }
+      50% { transform: scale(1.1) translateY(30px); opacity: 0.5; }
+      100% { transform: scale(1) translateY(0); opacity: 0.35; }
+    }
+
+    /* Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      width: 100%;
+      padding: 1.1rem 2rem;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(10, 12, 16, 0.65);
+    }
+
+    .header-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .logo-wrapper {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px var(--primary-glow);
+      color: #ffffff;
+      font-size: 1.25rem;
+    }
+
+    .brand-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Nav Buttons */
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--border-highlight);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .nav-btn.primary:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    }
+
+    /* Main Container */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem 5rem;
+      position: relative;
+      z-index: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Hero */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #a5b4fc, #c084fc, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .hub-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-smooth);
+    }
+
+    .hub-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--card-color, var(--primary)), transparent);
+      opacity: 0.7;
+    }
+
+    .hub-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--border-highlight);
+      background: var(--bg-card-hover);
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px -10px var(--card-glow, var(--primary-glow));
+    }
+
+    .card-qr {
+      --card-color: #6366f1;
+      --card-glow: rgba(99, 102, 241, 0.4);
+    }
+
+    .card-short {
+      --card-color: #06b6d4;
+      --card-glow: rgba(6, 182, 212, 0.4);
+    }
+
+    .card-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.85rem;
+      margin-bottom: 1.75rem;
+      color: var(--card-color);
+      transition: var(--transition-smooth);
+    }
+
+    .hub-card:hover .card-icon-wrap {
+      transform: scale(1.1) rotate(-3deg);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--card-color);
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 2.25rem;
+    }
+
+    .card-features li {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-features li i {
+      color: var(--card-color);
+      font-size: 0.8rem;
+    }
+
+    .card-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.975rem;
+      font-weight: 600;
+      color: var(--text-main);
+      transition: var(--transition-smooth);
+    }
+
+    .hub-card:hover .card-action-btn {
+      background: var(--card-color);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 4px 20px var(--card-glow);
+    }
+
+    .hub-card:hover .card-action-btn i {
+      transform: translateX(4px);
+    }
+
+    .card-action-btn i {
+      transition: transform 0.2s ease;
+    }
+
+    /* Footer */
+    .app-footer {
+      width: 100%;
+      padding: 1.75rem 2rem;
+      border-top: 1px solid var(--border-subtle);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 820px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-title {
+        font-size: 2.1rem;
+      }
+      .hub-card {
+        padding: 2rem 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom"></div>
+
+  <!-- Header Section with Buttons -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-link" id="brand-home" title="메인 허브">
+        <div class="logo-wrapper">
+          <i class="fa-solid fa-shapes"></i>
+        </div>
+        <span class="brand-name">Link & QR Studio</span>
+      </a>
+
+      <!-- 1. 'QR코드' 버튼과 'URL단축' 버튼 -->
+      <nav class="nav-tabs" aria-label="메인 기능 바로가기">
+        <a href="url2qr/index.html" class="nav-btn primary" id="btn-nav-qr" title="QR 코드 생성기로 이동">
+          <i class="fa-solid fa-qrcode"></i>
+          <span>QR코드</span>
+        </a>
+        <a href="urlShort/index.html" class="nav-btn" id="btn-nav-short" title="URL 단축 서비스로 이동">
+          <i class="fa-solid fa-scissors"></i>
+          <span>URL단축</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-wrapper">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-tag">All-in-One Web Tools</div>
+      <h1 class="hero-title">링크를 위한 가장 강력한 <span class="text-gradient">두 가지 도구</span></h1>
+      <p class="hero-subtitle">고해상도 QR코드 생성부터 OpenAPI 기반 초고속 URL 단축까지, 필요한 기능을 즉시 사용해보세요.</p>
+    </section>
+
+    <!-- Cards Grid -->
+    <div class="cards-grid">
+      
+      <!-- Card 1: QR코드 (url2qr 폴더 index.html 연결) -->
+      <a href="url2qr/index.html" class="hub-card card-qr" id="card-qr-link" title="QR코드 생성기로 이동">
+        <div>
+          <div class="card-icon-wrap">
+            <i class="fa-solid fa-qrcode"></i>
+          </div>
+          <span class="card-badge">Instant QR Generator</span>
+          <h2 class="card-title">QR코드 생성기</h2>
+          <p class="card-desc">웹사이트 링크를 고해상도 QR코드로 실시간 변환하고, 고화질 JPG 이미지로 바로 다운로드할 수 있습니다.</p>
+          <ul class="card-features">
+            <li><i class="fa-solid fa-check"></i> 실시간 QR코드 캔버스 렌더링</li>
+            <li><i class="fa-solid fa-check"></i> 화질 저하 없는 고해상도 JPG 다운로드</li>
+            <li><i class="fa-solid fa-check"></i> 반응형 글래스모피즘 인터랙션</li>
+          </ul>
+        </div>
+        <div class="card-action-btn">
+          <span>QR코드 만들기 바로가기</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- Card 2: URL단축 (urlShort 폴더 index.html 연결) -->
+      <a href="urlShort/index.html" class="hub-card card-short" id="card-short-link" title="URL 단축 서비스로 이동">
+        <div>
+          <div class="card-icon-wrap">
+            <i class="fa-solid fa-scissors"></i>
+          </div>
+          <span class="card-badge">OpenAPI Shortener</span>
+          <h2 class="card-title">URL 단축 서비스</h2>
+          <p class="card-desc">길고 복잡한 링크를 짧고 간결한 URL로 즉시 변환합니다. OpenAPI 기반의 초고속 단축과 원클릭 복사를 지원합니다.</p>
+          <ul class="card-features">
+            <li><i class="fa-solid fa-check"></i> 안정적인 OpenAPI 실시간 단축 요청</li>
+            <li><i class="fa-solid fa-check"></i> 미입력 시 단축하기 버튼 자동 비활성화</li>
+            <li><i class="fa-solid fa-check"></i> 원클릭 복사 및 '복사하였습니다' 즉시 알림</li>
+          </ul>
+        </div>
+        <div class="card-action-btn">
+          <span>URL 단축하기 바로가기</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>© 2026 Link & QR Studio. All rights reserved.</p>
+  </footer>
+</body>
+</html>

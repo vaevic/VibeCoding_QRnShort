@@ -1,0 +1,773 @@
+/* ==========================================================================
+   QR Craft - Modern Glassmorphism & High-End Dark UI
+   ========================================================================== */
+
+:root {
+  --bg-main: #0a0c10;
+  --bg-surface: rgba(22, 27, 34, 0.75);
+  --bg-surface-hover: rgba(30, 36, 45, 0.9);
+  --bg-card: rgba(18, 22, 29, 0.85);
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(99, 102, 241, 0.6);
+  --border-highlight: rgba(255, 255, 255, 0.15);
+
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-glow: rgba(99, 102, 241, 0.35);
+  --accent: #8b5cf6;
+  --accent-cyan: #06b6d4;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  --shadow-card: 0 20px 50px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
+  --shadow-glow: 0 0 40px -10px var(--primary-glow);
+  
+  --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.2s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient Background Light Orbs */
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+  animation: pulseGlow 12s ease-in-out infinite alternate;
+}
+
+.glow-top {
+  top: -150px;
+  left: 20%;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+}
+
+.glow-bottom {
+  bottom: -150px;
+  right: 15%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  animation-delay: -6s;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.35; }
+  100% { transform: scale(1.15) translate(30px, 20px); opacity: 0.55; }
+}
+
+/* ==========================================================================
+   Header (Top Left Logo)
+   ========================================================================== */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(10, 12, 16, 0.6);
+}
+
+.header-container {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-main);
+  transition: var(--transition-fast);
+}
+
+.brand-link:hover {
+  opacity: 0.85;
+}
+
+.logo-wrapper {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+.logo-fallback {
+  color: var(--primary);
+  font-size: 1.3rem;
+}
+
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #ffffff 40%, var(--text-muted) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Navigation Tabs: QR코드 & URL단축 */
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.nav-tab-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-tab-btn.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+.header-badges {
+  display: flex;
+  gap: 10px;
+}
+
+.badge {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge i {
+  color: var(--primary);
+}
+
+/* ==========================================================================
+   Main Layout & Dynamic State Management
+   ========================================================================== */
+.main-wrapper {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 90px 1.5rem 40px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  transition: var(--transition-smooth);
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  max-width: 680px;
+  margin-bottom: 2.5rem;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hero-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 1.25rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   QR Code Result Display (State 2 Center Component)
+   ========================================================================== */
+.qr-result-section {
+  display: none;
+  opacity: 0;
+  transform: scale(0.9) translateY(20px);
+  transition: var(--transition-smooth);
+  margin-bottom: 90px; /* Space for the bottom input */
+  z-index: 15;
+}
+
+.qr-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.qr-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.65), 0 0 50px -5px var(--primary-glow);
+}
+
+.qr-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #a5b4fc;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Canvas Wrapper & Interactive Overlay */
+.qr-canvas-wrapper {
+  position: relative;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.qr-canvas-wrapper:hover {
+  transform: scale(1.02);
+}
+
+#qrcode-mount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#qrcode-mount canvas {
+  display: block !important;
+  width: 240px;
+  height: 240px;
+  border-radius: 6px;
+}
+
+/* Hide duplicate img tag generated by qrcode.js */
+#qrcode-mount img {
+  display: none !important;
+}
+
+/* Hover overlay on QR code */
+.qr-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.qr-canvas-wrapper:hover .qr-overlay {
+  opacity: 1;
+}
+
+.overlay-icon-wrap {
+  width: 52px;
+  height: 52px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.6);
+  transform: translateY(8px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.qr-canvas-wrapper:hover .overlay-icon-wrap {
+  transform: translateY(0);
+}
+
+.overlay-text {
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* QR Meta & Actions */
+.qr-info-meta {
+  margin-top: 1.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.qr-target-preview {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.qr-actions-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action-btn {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+}
+
+.action-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+}
+
+.action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--border-highlight);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   URL Input Section (Center -> Bottom Dynamic Transition)
+   ========================================================================== */
+.input-panel-wrapper {
+  width: 100%;
+  max-width: 680px;
+  position: relative;
+  z-index: 20;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Form & Input Bar */
+.url-input-form {
+  width: 100%;
+}
+
+.input-group-modern {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 8px 10px 8px 18px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  transition: var(--transition-smooth);
+}
+
+.input-group-modern:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45), 0 0 25px -4px var(--primary-glow);
+  background: rgba(26, 32, 42, 0.95);
+}
+
+.input-icon {
+  color: var(--text-dim);
+  font-size: 1.15rem;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  transition: var(--transition-fast);
+}
+
+.input-group-modern:focus-within .input-icon {
+  color: var(--primary);
+}
+
+.url-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-main);
+  font-size: 1.05rem;
+  font-family: inherit;
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+.url-input::placeholder {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.btn-clear {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: var(--transition-fast);
+}
+
+.btn-clear:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.btn-clear.visible {
+  display: flex;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 12px 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  white-space: nowrap;
+}
+
+.btn-submit:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.btn-submit:active {
+  transform: translateY(1px);
+}
+
+.btn-submit .btn-icon {
+  transition: transform 0.2s ease;
+}
+
+.btn-submit:hover .btn-icon {
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   State 2: .has-result Mode (Input transitions to Bottom Dock)
+   ========================================================================== */
+.main-wrapper.has-result {
+  justify-content: center;
+  padding-bottom: 120px;
+}
+
+.main-wrapper.has-result .hero-section {
+  display: none;
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+.main-wrapper.has-result .qr-result-section {
+  display: flex;
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  animation: qrReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes qrReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Docked Input at bottom */
+.main-wrapper.has-result .input-panel-wrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 620px;
+  width: calc(100% - 2rem);
+  margin-bottom: 0;
+  animation: slideToBottom 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideToBottom {
+  0% {
+    transform: translate(-50%, 40px);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.main-wrapper.has-result .input-group-modern {
+  background: rgba(15, 19, 26, 0.88);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-subtle);
+}
+
+/* ==========================================================================
+   Toast Notifications
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  top: 90px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.toast {
+  background: rgba(22, 27, 34, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-highlight);
+  border-left: 4px solid var(--primary);
+  color: var(--text-main);
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.success {
+  border-left-color: #10b981;
+}
+
+.toast.success i {
+  color: #10b981;
+}
+
+.toast.error {
+  border-left-color: #ef4444;
+}
+
+.toast.error i {
+  color: #ef4444;
+}
+
+@keyframes toastIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast.out {
+  opacity: 0;
+  transform: translateY(-15px) scale(0.9);
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 1.25rem;
+    height: 68px;
+  }
+  
+  .header-badges {
+    display: none;
+  }
+
+  .hero-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  #qr-canvas {
+    width: 200px;
+    height: 200px;
+  }
+
+  .qr-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .input-group-modern {
+    padding: 6px 8px 6px 14px;
+  }
+
+  .btn-submit {
+    padding: 10px 16px;
+    font-size: 0.88rem;
+  }
+
+  .toast-container {
+    left: 1rem;
+    right: 1rem;
+    top: 76px;
+    align-items: center;
+  }
+}

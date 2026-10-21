@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkTrim - 빠르고 스마트한 URL 단축 서비스</title>
+  <meta name="description" content="긴 웹사이트 주소를 간결하고 깔끔한 단축 URL로 즉시 변환하세요. 무료 OpenAPI 기반 단축 링크 생성기.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom"></div>
+
+  <!-- Header Section with Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-link" id="brand-home" title="초기화면으로 이동">
+        <div class="logo-wrapper">
+          <div class="logo-fallback">
+            <i class="fa-solid fa-scissors"></i>
+          </div>
+        </div>
+        <span class="brand-name">LinkTrim</span>
+      </a>
+
+      <!-- Navigation Tabs: QR코드 & URL단축 -->
+      <nav class="nav-tabs" aria-label="메인 메뉴">
+        <a href="../url2qr/index.html" class="nav-tab-btn" id="nav-btn-qr" title="QR 코드 생성기로 이동">
+          <i class="fa-solid fa-qrcode"></i>
+          <span>QR코드</span>
+        </a>
+        <a href="index.html" class="nav-tab-btn active" id="nav-btn-short" title="URL 단축 서비스">
+          <i class="fa-solid fa-link-slash"></i>
+          <span>URL단축</span>
+        </a>
+      </nav>
+
+      <div class="header-badges">
+        <span class="badge"><i class="fa-solid fa-bolt"></i> 즉시 단축</span>
+        <span class="badge"><i class="fa-solid fa-shield-halved"></i> OpenAPI 기반</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="main-wrapper" id="main-wrapper">
+    
+    <!-- Hero / Headline -->
+    <section class="hero-section" id="hero-section">
+      <div class="hero-tag">Smart URL Shortener</div>
+      <h1 class="hero-title">긴 링크를 <span class="text-gradient">가장 빠르고 깔끔하게</span></h1>
+      <p class="hero-subtitle">줄이고 싶은 URL을 입력하고 단축하기를 눌러보세요. 한 번의 클릭으로 짧은 주소를 생성하고 복사할 수 있습니다.</p>
+    </section>
+
+    <!-- Shortener Card Container -->
+    <section class="shortener-container">
+      <div class="shortener-card">
+        
+        <!-- Step 1: Input URL Form -->
+        <form class="url-input-form" id="shorten-form" autocomplete="off">
+          <label for="url-input" class="form-label">
+            <i class="fa-solid fa-globe"></i> 단축할 원본 URL 입력
+          </label>
+          <div class="input-group-modern">
+            <div class="input-icon">
+              <i class="fa-solid fa-link"></i>
+            </div>
+            <input 
+              type="url" 
+              id="url-input" 
+              class="url-input" 
+              placeholder="단축할 URL 주소를 입력하세요 (예: https://www.google.com)" 
+              required 
+              aria-label="URL 입력"
+              spellcheck="false"
+            >
+            <button type="button" class="btn-clear" id="btn-clear-input" title="내용 지우기" aria-label="지우기" style="display: none;">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+            <button type="submit" class="btn-submit" id="btn-shorten" disabled title="단축할 URL을 입력하세요">
+              <span class="btn-text">단축하기</span>
+              <i class="fa-solid fa-wand-magic-sparkles btn-icon"></i>
+            </button>
+          </div>
+          <p class="input-helper-text" id="input-helper">
+            <i class="fa-solid fa-circle-info"></i> http:// 또는 https:// 가 없으면 자동으로 보정됩니다.
+          </p>
+        </form>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loading-state" style="display: none;" aria-live="polite">
+          <div class="spinner"></div>
+          <span class="loading-text">OpenAPI로 짧은 링크를 생성하고 있습니다...</span>
+        </div>
+
+        <!-- Step 2: Read-Only Output Box -->
+        <div class="output-panel" id="output-panel" style="display: none;" aria-live="polite">
+          <div class="output-divider">
+            <span>단축 결과</span>
+          </div>
+
+          <label for="short-output" class="form-label result-label">
+            <i class="fa-solid fa-check-circle success-icon"></i> 생성된 단축 URL (읽기 전용)
+          </label>
+
+          <div class="output-group-modern">
+            <div class="output-icon">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <input 
+              type="text" 
+              id="short-output" 
+              class="short-output-input" 
+              readonly 
+              aria-label="생성된 단축 URL" 
+              value=""
+              placeholder="단축 결과가 여기에 표시됩니다."
+            >
+            <button type="button" class="btn-copy" id="btn-copy" title="단축 URL 복사하기">
+              <i class="fa-regular fa-copy"></i>
+              <span class="btn-copy-text">복사</span>
+            </button>
+          </div>
+
+          <!-- Secondary Actions -->
+          <div class="output-actions">
+            <a href="#" target="_blank" rel="noopener noreferrer" class="action-link-btn" id="link-visit" title="새 탭에서 열기">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> 바로 방문하기
+            </a>
+            <button type="button" class="action-link-btn" id="btn-to-qr" title="이 단축 링크로 QR코드 만들기">
+              <i class="fa-solid fa-qrcode"></i> QR 코드로 변환
+            </button>
+            <button type="button" class="action-link-btn secondary" id="btn-reset" title="새로 만들기">
+              <i class="fa-solid fa-rotate-left"></i> 새로 단축하기
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Feature Highlights -->
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+          <div class="feature-content">
+            <h4>실시간 초고속 단축</h4>
+            <p>신뢰할 수 있는 OpenAPI를 통해 1초 안에 짧은 링크를 제공합니다.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa-solid fa-copy"></i></div>
+          <div class="feature-content">
+            <h4>원클릭 자동 복사</h4>
+            <p>버튼 클릭 한 번으로 클립보드 복사 및 완료 알림을 지원합니다.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+          <div class="feature-content">
+            <h4>QR 코드 원클릭 연동</h4>
+            <p>생성된 단축 URL을 곧바로 QR코드로 변환하여 활용할 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="script.js"></script>
+</body>
+</html>

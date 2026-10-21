@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Craft - 간편하고 세련된 QR 코드 생성기</title>
+  <meta name="description" content="URL을 입력하여 손쉽게 고해상도 QR코드를 생성하고 JPG 파일로 다운로드하세요.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for crisp modern icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom"></div>
+
+  <!-- Header Section with Logo -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="#" class="brand-link" id="brand-home" title="초기화면으로 이동">
+        <div class="logo-wrapper">
+          <img src="img/logo.png" alt="QR Craft 로고" class="logo-img" id="site-logo" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';">
+          <div class="logo-fallback" id="logo-fallback" style="display: none;">
+            <i class="fa-solid fa-qrcode"></i>
+          </div>
+        </div>
+        <span class="brand-name">QR Craft</span>
+      </a>
+
+      <!-- Navigation Tabs: QR코드 & URL단축 -->
+      <nav class="nav-tabs" aria-label="메인 메뉴">
+        <a href="index.html" class="nav-tab-btn active" id="nav-btn-qr" title="현재 서비스: QR 코드 생성기">
+          <i class="fa-solid fa-qrcode"></i>
+          <span>QR코드</span>
+        </a>
+        <a href="../urlShort/index.html" class="nav-tab-btn" id="nav-btn-short" title="URL 단축 서비스로 이동">
+          <i class="fa-solid fa-link-slash"></i>
+          <span>URL단축</span>
+        </a>
+      </nav>
+
+      <div class="header-badges">
+        <span class="badge"><i class="fa-solid fa-bolt"></i> 빠른 변환</span>
+        <span class="badge"><i class="fa-regular fa-image"></i> JPG 다운로드</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="main-wrapper" id="main-wrapper">
+    
+    <!-- Hero / Headline (Visible in Initial state) -->
+    <section class="hero-section" id="hero-section">
+      <div class="hero-tag">Smart QR Code Generator</div>
+      <h1 class="hero-title">링크를 입력하면 <span class="text-gradient">즉시 QR코드</span>로</h1>
+      <p class="hero-subtitle">원하는 URL을 입력하고 확인을 눌러보세요. 고화질 JPG 파일로 바로 저장할 수 있습니다.</p>
+    </section>
+
+    <!-- Center QR Result Area (Hidden initially, visible in Result state) -->
+    <section class="qr-result-section" id="qr-result-section" aria-live="polite">
+      <div class="qr-card-container">
+        
+        <!-- Interactive QR Card -->
+        <div class="qr-card" id="qr-card" title="클릭하여 JPG 파일로 다운로드">
+          <div class="qr-badge">JPG 원클릭 다운로드</div>
+          
+          <div class="qr-canvas-wrapper" id="qr-canvas-wrapper">
+            <!-- Container where qrcode.js mounts the canvas -->
+            <div id="qrcode-mount"></div>
+            <div class="qr-overlay">
+              <div class="overlay-icon-wrap">
+                <i class="fa-solid fa-download"></i>
+              </div>
+              <span class="overlay-text">클릭하여 JPG 저장</span>
+            </div>
+          </div>
+
+          <div class="qr-info-meta">
+            <span class="qr-target-preview" id="qr-target-preview">https://...</span>
+            <div class="qr-actions-row">
+              <button type="button" class="action-btn" id="btn-download-jpg" title="JPG 파일 다운로드">
+                <i class="fa-solid fa-download"></i> JPG 다운로드
+              </button>
+              <button type="button" class="action-btn secondary" id="btn-copy-url" title="입력 URL 복사">
+                <i class="fa-regular fa-copy"></i> 링크 복사
+              </button>
+              <button type="button" class="action-btn secondary" id="btn-reset-view" title="새로운 QR 만들기">
+                <i class="fa-solid fa-rotate-left"></i> 새로 만들기
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Input Section: Center in Initial Mode, Moves to Bottom in Result Mode -->
+    <section class="input-panel-wrapper" id="input-panel-wrapper">
+      <form class="url-input-form" id="url-form" autocomplete="off">
+        <div class="input-group-modern">
+          <div class="input-icon">
+            <i class="fa-solid fa-link"></i>
+          </div>
+          <input 
+            type="text" 
+            id="url-input" 
+            class="url-input" 
+            placeholder="변환할 URL 주소를 입력하세요 (예: https://example.com)" 
+            required 
+            aria-label="URL 입력"
+            spellcheck="false"
+          >
+          <button type="button" class="btn-clear" id="btn-clear-input" title="내용 지우기" aria-label="지우기">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <button type="submit" class="btn-submit" id="btn-generate">
+            <span class="btn-text">확인</span>
+            <i class="fa-solid fa-arrow-right btn-icon"></i>
+          </button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- QR Code Library (Local Bundle) -->
+  <script src="js/qrcode.min.js"></script>
+  <!-- Application Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
