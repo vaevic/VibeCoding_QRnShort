@@ -25,7 +25,7 @@
   <!-- Header Section with Logo -->
   <header class="app-header">
     <div class="header-container">
-      <a href="#" class="brand-link" id="brand-home" title="초기화면으로 이동">
+      <a href="../index.html" class="brand-link" id="brand-home" title="처음 페이지(홈)로 이동">
         <div class="logo-wrapper">
           <img src="img/logo.png" alt="QR Craft 로고" class="logo-img" id="site-logo" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';">
           <div class="logo-fallback" id="logo-fallback" style="display: none;">
@@ -35,22 +35,24 @@
         <span class="brand-name">QR Craft</span>
       </a>
 
-      <!-- Navigation Tabs: QR코드 & URL단축 -->
+      <!-- Navigation Tabs: 홈, QR코드, URL단축 -->
       <nav class="nav-tabs" aria-label="메인 메뉴">
+        <a href="../index.html" class="nav-tab-btn" id="nav-btn-home" title="처음 페이지(홈)로 이동">
+          <i class="fa-solid fa-house"></i>
+          <span>홈</span>
+        </a>
         <a href="index.html" class="nav-tab-btn active" id="nav-btn-qr" title="현재 서비스: QR 코드 생성기">
           <i class="fa-solid fa-qrcode"></i>
           <span>QR코드</span>
         </a>
         <a href="../urlShort/index.html" class="nav-tab-btn" id="nav-btn-short" title="URL 단축 서비스로 이동">
-          <i class="fa-solid fa-link-slash"></i>
+          <i class="fa-solid fa-scissors"></i>
           <span>URL단축</span>
         </a>
       </nav>
 
-      <div class="header-badges">
-        <span class="badge"><i class="fa-solid fa-bolt"></i> 빠른 변환</span>
-        <span class="badge"><i class="fa-regular fa-image"></i> JPG 다운로드</span>
-      </div>
+      <!-- 우측 여백 밸런스용 빈 요소 (중앙 탭의 완전한 센터 정렬 지원) -->
+      <div class="header-spacer" aria-hidden="true"></div>
     </div>
   </header>
 
